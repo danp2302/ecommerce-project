@@ -8,19 +8,18 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import NetworkRequests from "../networkRequests/networkRequests";
+import { getRequest } from "../networkRequests/networkRequests";
 import { ProductInterface } from "../interfaces/productInterface";
 import AddToBasket from "./addToBasket";
 import { useState, useEffect } from "react";
 import React from "react";
 
 const Products = () => {
-  const networkRequests = new NetworkRequests();
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData = await networkRequests.getRequest({
+      const fetchedData = await getRequest({
         url: "http://localhost:9000/getProducts",
       });
       setData(fetchedData);
@@ -35,6 +34,7 @@ const Products = () => {
         <CardContent>
           <Typography>{product?.productName}</Typography>
           <Typography>{product?.productDescription}</Typography>
+          <Typography>{product?.productInStock}</Typography>
           <Typography>{product?.productPrice}</Typography>
         </CardContent>
         <CardMedia
