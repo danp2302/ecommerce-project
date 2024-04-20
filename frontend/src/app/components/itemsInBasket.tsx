@@ -1,12 +1,28 @@
+"use client";
 import React from "react";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import { Badge } from "@mui/material";
+import { useState, useEffect } from "react";
+import { getRequest } from "../networkRequests/networkRequests";
 
 const ItemsInBasket = () => {
+  const [totalItems, setTotalItems] = useState(0);
+
+  useEffect(() => {
+    const fetchBasketItems = async () => {
+      const fetchedBasketItems = await getRequest({
+        url: "http://localhost:9000/numberOfItemsInBasket",
+      });
+      setTotalItems(fetchedBasketItems);
+    };
+
+    fetchBasketItems();
+    setInterval(fetchBasketItems, 1000);
+  }, []);
   return (
-    <div style={{ position: "relative" }}>
+    <div className="relative px-5">
       <Badge
-        badgeContent={4}
+        badgeContent={totalItems}
         color="primary"
         overlap="circular"
         sx={{ "& .MuiBadge-badge": { fontSize: 25, height: 30, minWidth: 30 } }}
