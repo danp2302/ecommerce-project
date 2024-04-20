@@ -4,6 +4,7 @@ import ActionFeedback from "./components/actionFeedback";
 import ItemsInBasket from "./components/itemsInBasket";
 import TotalCost from "./components/totalCost";
 import TitleBar from "./components/titleBar";
+
 export default function Home() {
   return (
     <ActionFeedbackProvider>
