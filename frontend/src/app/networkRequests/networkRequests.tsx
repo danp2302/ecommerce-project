@@ -31,8 +31,9 @@ const postRequest = async ({ url, parameters }: RequestInterface) => {
       throw new Error("Network response was not ok");
     }
     const responseData = await response.json();
+
     if (responseData.success) {
-      return responseData.data;
+      return responseData;
     } else {
       throw new Error("Response data was not successful");
     }
