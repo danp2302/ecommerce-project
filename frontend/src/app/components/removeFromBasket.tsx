@@ -2,22 +2,24 @@
 import React, { useContext } from "react";
 import { ProductInterface } from "../interfaces/productInterface";
 import { Button } from "@mui/material";
+import { useState } from "react";
 import { postRequest } from "../networkRequests/networkRequests";
 import { ActionFeedbackContext } from "../context/actionFeedbackContext";
 
-const AddToBasket = ({ productId }: ProductInterface) => {
+const RemoveFromBasket = ({ productId }: ProductInterface) => {
   const { setAlert } = useContext(ActionFeedbackContext);
 
-  const addToBasket = async (prodId: number) => {
+  const removeFromBasket = async (prodId: number) => {
+    console.log(prodId);
     const postData = await postRequest({
-      url: "http://localhost:9000/addItemToBasket",
+      url: "http://localhost:9000/removeItemFromBasket",
       parameters: prodId,
     });
 
     if (postData.success) {
       setAlert({
         open: true,
-        message: "Item added to basket successfully!",
+        message: "Item removed from basket successfully!",
         color: "success",
         autoHideDuration: 3000,
       });
@@ -28,11 +30,11 @@ const AddToBasket = ({ productId }: ProductInterface) => {
     <Button
       size="small"
       variant="contained"
-      onClick={() => addToBasket(productId)}
+      onClick={() => removeFromBasket(productId)}
     >
-      Add To Basket
+      Remove From Basket
     </Button>
   );
 };
 
-export default AddToBasket;
+export default RemoveFromBasket;

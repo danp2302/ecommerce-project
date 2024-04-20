@@ -11,6 +11,7 @@ import {
 import { getRequest } from "../networkRequests/networkRequests";
 import { ProductInterface } from "../interfaces/productInterface";
 import AddToBasket from "./addToBasket";
+import RemoveFromBasket from "./removeFromBasket";
 import { useState, useEffect } from "react";
 import React from "react";
 
@@ -26,16 +27,32 @@ const Products = () => {
     };
 
     fetchData();
+    setInterval(fetchData, 1000);
   }, []);
 
   return data?.map((product: ProductInterface) => (
     <div className="flex gap-16">
-      <Card>
+      <Card variant="outlined">
         <CardContent>
-          <Typography>{product?.productName}</Typography>
-          <Typography>{product?.productDescription}</Typography>
-          <Typography>{product?.productInStock}</Typography>
-          <Typography>{product?.productPrice}</Typography>
+          <Typography sx={{ fontSize: 22 }} color="text.primary" gutterBottom>
+            {product?.productName}
+          </Typography>
+          <Typography sx={{ fontSize: 16 }} color="text.secondary">
+            {product?.productDescription}
+          </Typography>
+          <br />
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-full md:w-1/2 px-2 mb-4">
+              <Typography sx={{ fontSize: 14 }}>
+                Available Stock: {product?.productInStock}
+              </Typography>
+            </div>
+            <div className="w-full md:w-1/2 px-2 mb-4">
+              <Typography sx={{ fontSize: 14 }}>
+                Price: £{product?.productPrice}
+              </Typography>
+            </div>
+          </div>
         </CardContent>
         <CardMedia
           component="img"
@@ -44,9 +61,7 @@ const Products = () => {
         ></CardMedia>
         <CardActions>
           <AddToBasket productId={product.productId} />
-          <Button size="small" variant="contained">
-            Remove From Basket
-          </Button>
+          <RemoveFromBasket productId={product.productId} />
         </CardActions>
       </Card>
     </div>
