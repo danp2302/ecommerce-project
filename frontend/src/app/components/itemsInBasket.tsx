@@ -25,9 +25,9 @@ const ItemsInBasket = () => {
         badgeContent={totalItems}
         color="primary"
         overlap="circular"
-        sx={{ "& .MuiBadge-badge": { fontSize: 25, height: 30, minWidth: 30 } }}
+        sx={{ "& .MuiBadge-badge": { fontSize: 20, height: 25, minWidth: 30 } }}
       >
-        <ShoppingBasketIcon color="action" sx={{ fontSize: 100 }} />
+        <ShoppingBasketIcon color="action" sx={{ fontSize: 60 }} />
       </Badge>
     </div>
   );

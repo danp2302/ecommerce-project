@@ -3,6 +3,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { getRequest } from "../networkRequests/networkRequests";
 import CurrencyPoundIcon from "@mui/icons-material/CurrencyPound";
+import { Typography } from "@mui/material";
 const TotalCost = () => {
   const [totalCost, setTotalCost] = useState(0);
 
@@ -18,16 +19,18 @@ const TotalCost = () => {
     setInterval(fetchTotalCost, 1000);
   }, []);
   return (
-    <div className="inline-flex items-center p-2 rounded-lg border border-gray-300 bg-blue-300">
+    <div className="flex items-center">
       <svg
-        className="w-6 h-6 text-gray-600 mr-2"
+        className="w-10 h-10 text-gray-600"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
       >
-        <CurrencyPoundIcon></CurrencyPoundIcon>
+        <CurrencyPoundIcon />
       </svg>
-      <span className="text-xl font-medium text-gray-800">{totalCost}</span>
+      <Typography className="text-4xl font-large text-gray-800">
+        {totalCost}
+      </Typography>
     </div>
   );
 };
