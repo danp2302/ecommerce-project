@@ -75,6 +75,7 @@ const updateJSONFile = async (
   fileName,
   newFileContent,
   propertyName,
+  operationType = "",
   productId = null
 ) => {
   const readFile = await readJSONFile(fileName);
@@ -84,25 +85,57 @@ const updateJSONFile = async (
 
     for (let i = 0; i < prop.length; i++) {
       const item = prop[i];
-      if (item.hasOwnProperty("items")) {
-        for (const field in newFileContent) {
-          if (item.hasOwnProperty(field)) {
-            item[field] = newFileContent[field];
+      if (operationType === "add") {
+        if (item.hasOwnProperty("items")) {
+          for (newContent in newFileContent) {
+            if (newContent !== "items") {
+              console.log("checking new", newContent);
+              item[newContent] = newFileContent[newContent];
+            } else {
+              // Add new items to the basket
+              const itemsToAdd = newFileContent["items"];
+              if (itemsToAdd) {
+                const basketItems = item["items"];
+                basketItems.push(...itemsToAdd);
+              }
+            }
+          }
+        } else if (item.id === parseInt(productId)) {
+          for (newContent in newFileContent) {
+            console.log(newContent);
+            if (newContent !== "items") {
+              item[newContent] = newFileContent[newContent];
+            }
           }
         }
-      } else {
-        if (item.id === productId) {
-          for (const field in newFileContent) {
-            item[field] = newFileContent[field];
+      } else if (operationType === "remove") {
+        if (item.hasOwnProperty("items")) {
+          const subItems = item.items;
+
+          for (let i = 0; i < subItems.length; i++) {
+            if (subItems[i].id === parseInt(productId)) {
+              subItems.splice(i, 1);
+              break;
+            }
+          }
+          for (newContent in newFileContent) {
+            if (newContent !== "items") {
+              item[newContent] = newFileContent[newContent];
+            }
+          }
+        } else if (item.id === parseInt(productId)) {
+          for (newContent in newFileContent) {
+            console.log(newContent);
+            if (newContent !== "items") {
+              item[newContent] = newFileContent[newContent];
+            }
           }
         }
       }
+      await fileSystem.writeFile(fileName, JSON.stringify(readFile, null, 2));
     }
-    await fileSystem.writeFile(fileName, JSON.stringify(readFile, null, 2));
-    console.log("File updated successfully");
   } else {
     console.log("Property not found in the file");
   }
 };
-
 module.exports = { getImageBase64 };
