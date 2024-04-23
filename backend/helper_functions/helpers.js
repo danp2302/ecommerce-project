@@ -5,17 +5,6 @@ function getImageBase64(imageURL) {
   return encodedImage.toString("base64");
 }
 
-function readJSONFile(file, callback) {
-  fileSystem.readFile(file, "utf-8", (err, data) => {
-    if (err) {
-      callback(err, null);
-      return;
-    }
-    const jsonData = JSON.parse(data);
-    callback(null, jsonData);
-  });
-}
-
 const readJSONFile = async (filename) => {
   try {
     const data = await fileSystem.readFile(filename, "utf-8");
@@ -82,29 +71,37 @@ const ReturnProductId = async (productId, fileData) => {
   }
 };
 
-const updateJSONFile = async (fileName, newFileContent, propertyName) => {
+const updateJSONFile = async (
+  fileName,
+  newFileContent,
+  propertyName,
+  productId = null
+) => {
   const readFile = await readJSONFile(fileName);
 
-  console.log(readFile);
-  const prop = readFile[propertyName];
+  if (readFile.hasOwnProperty(propertyName)) {
+    const prop = readFile[propertyName];
 
-  console.log("here", prop);
-  if (prop) {
     for (let i = 0; i < prop.length; i++) {
-      console.log("props", prop[i]);
       const item = prop[i];
-      for (const field in newFileContent) {
-        if (item.hasOwnProperty(field)) {
-          item[field] = newFileContent[field];
+      if (item.hasOwnProperty("items")) {
+        for (const field in newFileContent) {
+          if (item.hasOwnProperty(field)) {
+            item[field] = newFileContent[field];
+          }
+        }
+      } else {
+        if (item.id === productId) {
+          for (const field in newFileContent) {
+            item[field] = newFileContent[field];
+          }
         }
       }
     }
-
-    await fileSystem.writeFile(
-      fileName,
-      JSON.stringify(newFileContent, null, 2)
-    );
+    await fileSystem.writeFile(fileName, JSON.stringify(readFile, null, 2));
     console.log("File updated successfully");
+  } else {
+    console.log("Property not found in the file");
   }
 };
 
