@@ -1,203 +1,277 @@
 //A file to deal with the basket
 const path = require("path");
-const fileSystem = require("fs");
 const appRoot = path.join(__dirname, "..");
-require("dotenv/config");
 
-const helperFunctions = require("../helper_functions/helpers");
 const productsFile = path.join(appRoot, "./data", "products.json");
 const basketFile = path.join(appRoot, "./data", "basket.json");
+const helperFunctions = require("../helper_functions/helpers");
 
 const addToBasket = async (req, res) => {
   const productId = parseInt(req.params.productId);
-  helperFunctions.readJSONFile(productsFile, (productsErr, productsData) => {
-    helperFunctions.readJSONFile(basketFile, (basketErr, basketData) => {
-      if (productsErr) {
-        return res.status(500).json({
-          message: `Unable to read products file ${productsErr}`,
-          success: false,
-        });
-      }
-      if (basketErr) {
-        return res.status(500).json({
-          message: `Unable to read basket file ${basketErr}`,
-          success: false,
-        });
-      }
 
-      const product = productsData.products.find(
-        (product) => product.id === parseInt(productId)
-      );
+  const basketData = await helperFunctions.readJSONFile(basketFile);
 
-      if (!product || product.numberInStock <= 0) {
-        return res.status(404).json({
-          message: "Product not found or out of stock",
-          success: false,
-        });
-      }
-      product.numberInStock -= 1;
+  const productData = await helperFunctions.readJSONFile(productsFile);
 
-      let basketItem = {
-        name: product.name,
-        cost: product.price,
+  let getAvailableStock = 0;
+  let checkTotalCost = false;
+  let checkCheckout = false;
+  let checkStock = false;
+
+  let basketItems = {
+    id: 0,
+    name: "",
+    cost: 0,
+  };
+
+  if (basketData && productData) {
+    const returnItem = await helperFunctions.returnSingleItemByID(
+      productData.products,
+      parseInt(productId)
+    );
+
+    if (returnItem) {
+      basketItems = {
+        id: returnItem.id,
+        name: returnItem.name,
+        cost: returnItem.price,
       };
-
-      let basket = basketData.basket[0];
-
-      if (!basket) {
-        basket = {
-          items: [basketItem],
-          checkout: 1,
-          totalCost: product.price,
-        };
-        basketData.basket.push(basket);
-      } else {
-        basket.items.push(basketItem);
-        basket.totalCost += product.price;
-        basket.checkout += 1;
+      getAvailableStock = returnItem.numberInStock;
+      if (returnItem.numberInStock > 0) {
+        checkStock = true;
       }
-      fileSystem.writeFile(
+    } else {
+      console.log("Unable to return data, item does not exist");
+    }
+
+    const updateItemInStock = {
+      numberInStock: (getAvailableStock -= 1),
+    };
+    const currentBasket = basketData.basket[0];
+    if (currentBasket.totalCost >= 0 && currentBasket.checkout >= 0) {
+      checkCheckout = true;
+      checkTotalCost = true;
+    }
+
+    if (checkStock && checkCheckout && checkTotalCost) {
+      const newBasketData = {
+        items: [basketItems], // Assuming basketItems is an array of items to add
+        checkout: (currentBasket.checkout += 1), // Increment checkout count
+        totalCost: (currentBasket.totalCost += returnItem.price), // Add to total cost
+      };
+      const updateBasket = await helperFunctions.updateJSONFile(
         basketFile,
-        JSON.stringify(basketData, null, 2),
-        (writeBasketErr) => {
-          if (writeBasketErr) {
-            return res.status(500).json({
-              message: `Error writing to basket file ${writeBasketErr}`,
-              success: false,
-            });
-          }
-
-          fileSystem.writeFile(
-            productsFile,
-            JSON.stringify(productsData, null, 2),
-            (writeProductsErr) => {
-              if (writeProductsErr) {
-                return res.status(500).json({
-                  message: `Error writing to products file ${writeProductsErr}`,
-                  success: false,
-                });
-              }
-
-              return res.status(200).json({
-                message: `Product added to basket successfully`,
-                basket,
-                success: true,
-              });
-            }
-          );
-        }
+        newBasketData,
+        "basket",
+        "add",
+        productId
       );
-    });
-  });
+
+      const updateProduct = await helperFunctions.updateJSONFile(
+        productsFile,
+        updateItemInStock,
+        "products",
+        "add",
+        productId
+      );
+      if (updateBasket && updateProduct) {
+        return await helperFunctions.returnStatusMessage(
+          res,
+          "Item added to basket",
+          true,
+          200
+        );
+      } else {
+        return await helperFunctions.returnStatusMessage(
+          res,
+          "Unable to add item to basket",
+          false,
+          404
+        );
+      }
+    } else {
+      return await helperFunctions.returnStatusMessage(
+        res,
+        "Either the stock or the total cost or the checkout value is less than 0",
+        false,
+        404
+      );
+    }
+  } else {
+    return await helperFunctions.returnStatusMessage(
+      res,
+      "Unable to read the file",
+      false,
+      500
+    );
+  }
 };
+
 const removeFromBasket = async (req, res) => {
   const productId = req.params.productId;
 
-  helperFunctions.readJSONFile(productsFile, (productsErr, productsData) => {
-    helperFunctions.readJSONFile(basketFile, (basketErr, basketData) => {
-      if (productsErr) {
-        return res.status(500).json({
-          message: `Unable to read products file ${productsErr}`,
-          success: false,
-        });
-      }
-      if (basketErr) {
-        return res.status(500).json({
-          message: `Unable to read basket file ${basketErr}`,
-          success: false,
-        });
-      }
+  const basketData = await helperFunctions.readJSONFile(basketFile);
 
-      const product = productsData.products.find(
-        (product) => product.id === parseInt(productId)
+  const productData = await helperFunctions.readJSONFile(productsFile);
+
+  let getAvailableStock = 0;
+  let checkTotalCost = false;
+  let checkCheckout = false;
+  let checkStock = false;
+
+  let basketItems = {
+    id: 0,
+    name: "",
+    cost: 0,
+  };
+
+  if (basketData && productData) {
+    const returnItem = await helperFunctions.returnSingleItemByID(
+      productData.products,
+      parseInt(productId)
+    );
+
+    if (returnItem) {
+      basketItems = {
+        id: returnItem.id,
+        name: returnItem.name,
+        cost: returnItem.price,
+      };
+      getAvailableStock = returnItem.numberInStock;
+      if (returnItem.numberInStock >= 0) {
+        checkStock = true;
+      }
+    } else {
+      console.log("Unable to return data, item does not exist");
+    }
+
+    const updateItemInStock = {
+      numberInStock: (getAvailableStock += 1),
+    };
+    const currentBasket = basketData.basket[0];
+
+    if (currentBasket.totalCost > 0 && currentBasket.checkout > 0) {
+      checkCheckout = true;
+      checkTotalCost = true;
+    }
+
+    const newBasketData = {
+      items: [basketItems],
+      checkout: (currentBasket.checkout -= 1),
+      totalCost: (currentBasket.totalCost -= returnItem.price),
+    };
+    if (checkStock && checkCheckout && checkTotalCost) {
+      const updateBasket = await helperFunctions.updateJSONFile(
+        basketFile,
+        newBasketData,
+        "basket",
+        "remove",
+        productId
       );
 
-      if (!product) {
-        return res.status(404).json({ message: "Product not found" });
-      }
-      product.numberInStock += 1;
-
-      const itemIndex = basketData.basket[0].items.findIndex(
-        (item) => item.name === product.name && item.cost === product.price
+      const updateProducts = await helperFunctions.updateJSONFile(
+        productsFile,
+        updateItemInStock,
+        "products",
+        "remove",
+        productId
       );
 
-      if (itemIndex !== -1) {
-        basketData.basket[0].items.splice(itemIndex, 1);
-        basketData.basket[0].totalCost -= product.price;
-        basketData.basket[0].checkout -= 1;
-
-        fileSystem.writeFile(
-          basketFile,
-          JSON.stringify(basketData, null, 2),
-          (writeBasketErr) => {
-            if (writeBasketErr) {
-              return res.status(500).json({
-                message: `Error writing to basket file ${writeBasketErr}`,
-                success: false,
-              });
-            }
-
-            fileSystem.writeFile(
-              productsFile,
-              JSON.stringify(productsData, null, 2),
-              (writeProductsErr) => {
-                if (writeProductsErr) {
-                  return res.status(500).json({
-                    message: `Error writing to basket file ${writeProductsErr}`,
-                    success: false,
-                  });
-                }
-
-                res.status(200).json({
-                  message: `Product removed from basket successfully`,
-                  data: basketData.basket[0],
-                  success: true,
-                });
-              }
-            );
-          }
+      if (updateBasket && updateProducts) {
+        return await helperFunctions.returnStatusMessage(
+          res,
+          "Item removed from basket",
+          true,
+          200
         );
       } else {
-        return res
-          .status(404)
-          .json({ message: "Item not found in basket", success: false });
+        return await helperFunctions.returnStatusMessage(
+          res,
+          "Unable to remove item from basket",
+          false,
+          404
+        );
       }
-    });
-  });
+    } else {
+      return await helperFunctions.returnStatusMessage(
+        res,
+        "Either the stock or the total cost or the checkout value is less than 0",
+        false,
+        404
+      );
+    }
+  } else {
+    return await helperFunctions.returnStatusMessage(
+      res,
+      "Unable to read the file",
+      false,
+      500
+    );
+  }
 };
 
-const numberOfItemsInBasket = (req, res) => {
-  helperFunctions.readJSONFile(basketFile, (checkoutErr, basketData) => {
-    if (checkoutErr) {
-      return res.status(500).json({
-        message: `Error reading checkout file ${checkoutErr}`,
-        success: false,
-      });
+const numberOfItemsInBasket = async (req, res) => {
+  const basketData = await helperFunctions.readJSONFile(basketFile);
+
+  if (basketData) {
+    const itemsInBasket = basketData.basket[0].checkout;
+
+    if (itemsInBasket >= 0) {
+      return await helperFunctions.returnStatusMessage(
+        res,
+        "Retrieved number of items in basket",
+        true,
+        200,
+        itemsInBasket
+      );
     } else {
-      return res.status(200).json({
-        message: "Successfully retrieved total number of items at checkout",
-        data: basketData.basket[0].checkout,
-        success: true,
-      });
+      return await helperFunctions.returnStatusMessage(
+        res,
+        "Unable to retrieve number of items in basket",
+        true,
+        404
+      );
     }
-  });
+  } else {
+    return await helperFunctions.returnStatusMessage(
+      res,
+      "Unable to read file",
+      false,
+      500
+    );
+  }
 };
 
-const totalCostOfBasket = (req, res) => {
-  helperFunctions.readJSONFile(basketFile, (checkoutErr, basketData) => {
-    if (checkoutErr) {
-      return res.status(500).json({
-        message: `Error reading checkout file ${checkoutErr}`,
-        success: false,
-      });
+const totalCostOfBasket = async (req, res) => {
+  const basketData = await helperFunctions.readJSONFile(basketFile);
+
+  if (basketData) {
+    const totalCostOfBasket = basketData.basket[0].totalCost;
+
+    if (totalCostOfBasket >= 0) {
+      return await helperFunctions.returnStatusMessage(
+        res,
+        "Retrieved total cost of basket",
+        true,
+        200,
+        totalCostOfBasket
+      );
     } else {
-      return res.status(200).json({
-        message: "Successfully retrieved total cost of basket",
-        data: basketData.basket[0].totalCost,
-        success: true,
-      });
+      return await helperFunctions.returnStatusMessage(
+        res,
+        "Unable to retrieve total cost of basket",
+        true,
+        404
+      );
     }
-  });
+  } else {
+    await helperFunctions.returnStatusMessage(
+      res,
+      "Unable to read file",
+      false,
+      500
+    );
+  }
 };
 
 module.exports = {
