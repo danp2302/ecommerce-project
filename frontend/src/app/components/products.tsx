@@ -6,7 +6,6 @@ import {
   CardContent,
   CardMedia,
   Typography,
-  Button,
 } from "@mui/material";
 import { getRequest } from "../networkRequests/networkRequests";
 import { ProductInterface } from "../interfaces/productInterface";
@@ -31,7 +30,7 @@ const Products = () => {
   }, []);
 
   return data?.map((product: ProductInterface) => (
-    <div className="flex gap-16">
+    <div className="flex gap-16 items-start">
       <Card variant="outlined">
         <CardContent>
           <Typography sx={{ fontSize: 22 }} color="text.primary" gutterBottom>
@@ -57,11 +56,11 @@ const Products = () => {
         <CardMedia
           component="img"
           height="150"
-          src={`data:image/jpeg;base64,${product.productImage}`}
+          src={`data:image/jpeg;base64,${product?.productImage}`}
         ></CardMedia>
         <CardActions>
-          <AddToBasket productId={product.productId} />
-          <RemoveFromBasket productId={product.productId} />
+          <AddToBasket productId={product?.productId} />
+          <RemoveFromBasket productId={product?.productId} />
         </CardActions>
       </Card>
     </div>

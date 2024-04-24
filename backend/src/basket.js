@@ -74,6 +74,7 @@ const addToBasket = async (req, res) => {
         "add",
         productId
       );
+
       if (updateBasket && updateProduct) {
         return await helperFunctions.returnStatusMessage(
           res,
@@ -118,6 +119,7 @@ const removeFromBasket = async (req, res) => {
   let checkTotalCost = false;
   let checkCheckout = false;
   let checkStock = false;
+  let checkItemsExistsInBasket = false;
 
   let basketItems = {
     id: 0,
@@ -149,7 +151,15 @@ const removeFromBasket = async (req, res) => {
       numberInStock: (getAvailableStock += 1),
     };
     const currentBasket = basketData.basket[0];
+    const currentItemsInBasket = basketData.basket[0].items;
 
+    for (let i = 0; i < currentItemsInBasket.length; i++) {
+      const currentItemId = currentItemsInBasket[i].id;
+
+      if (parseInt(productId) === currentItemId) {
+        checkItemsExistsInBasket = true;
+      }
+    }
     if (currentBasket.totalCost > 0 && currentBasket.checkout > 0) {
       checkCheckout = true;
       checkTotalCost = true;
@@ -160,7 +170,12 @@ const removeFromBasket = async (req, res) => {
       checkout: (currentBasket.checkout -= 1),
       totalCost: (currentBasket.totalCost -= returnItem.price),
     };
-    if (checkStock && checkCheckout && checkTotalCost) {
+    if (
+      checkStock &&
+      checkCheckout &&
+      checkTotalCost &&
+      checkItemsExistsInBasket
+    ) {
       const updateBasket = await helperFunctions.updateJSONFile(
         basketFile,
         newBasketData,
@@ -195,7 +210,7 @@ const removeFromBasket = async (req, res) => {
     } else {
       return await helperFunctions.returnStatusMessage(
         res,
-        "Either the stock or the total cost or the checkout value is less than 0",
+        "Either the stock or the total cost or the checkout value is less than 0 or the item is not in the basket",
         false,
         404
       );

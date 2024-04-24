@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import "../../../public/website_logo.jpg";
 
 const WebsiteLogo = () => {

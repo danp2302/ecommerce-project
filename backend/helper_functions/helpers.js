@@ -48,62 +48,62 @@ const updateJSONFile = async (
   productId = null
 ) => {
   const readFile = await readJSONFile(fileName);
+  if (readFile) {
+    if (readFile.hasOwnProperty(propertyName)) {
+      const prop = readFile[propertyName];
 
-  if (readFile.hasOwnProperty(propertyName)) {
-    const prop = readFile[propertyName];
-
-    for (let i = 0; i < prop.length; i++) {
-      const item = prop[i];
-      if (operationType === "add") {
-        if (item.hasOwnProperty("items")) {
-          for (newContent in newFileContent) {
-            if (newContent !== "items") {
-              item[newContent] = newFileContent[newContent];
-            } else {
-              const itemsToAdd = newFileContent["items"];
-              if (itemsToAdd) {
-                const basketItems = item["items"];
-                basketItems.push(...itemsToAdd);
+      for (let i = 0; i < prop.length; i++) {
+        const item = prop[i];
+        if (operationType === "add") {
+          if (item.hasOwnProperty("items")) {
+            for (newContent in newFileContent) {
+              if (newContent !== "items") {
+                item[newContent] = newFileContent[newContent];
+              } else {
+                const itemsToAdd = newFileContent["items"];
+                if (itemsToAdd) {
+                  const basketItems = item["items"];
+                  basketItems.push(...itemsToAdd);
+                }
+              }
+            }
+          } else if (item.id === parseInt(productId)) {
+            for (newContent in newFileContent) {
+              if (newContent !== "items") {
+                item[newContent] = newFileContent[newContent];
               }
             }
           }
-        } else if (item.id === parseInt(productId)) {
-          for (newContent in newFileContent) {
-            if (newContent !== "items") {
-              item[newContent] = newFileContent[newContent];
-            }
-          }
-        }
-      } else if (operationType === "remove") {
-        if (item.hasOwnProperty("items")) {
-          const subItems = item.items;
+        } else if (operationType === "remove") {
+          if (item.hasOwnProperty("items")) {
+            const subItems = item.items;
 
-          for (let i = 0; i < subItems.length; i++) {
-            if (subItems[i].id === parseInt(productId)) {
-              subItems.splice(i, 1);
-              break;
+            for (let i = 0; i < subItems.length; i++) {
+              if (subItems[i].id === parseInt(productId)) {
+                subItems.splice(i, 1);
+                break;
+              }
             }
-          }
-          for (newContent in newFileContent) {
-            if (newContent !== "items") {
-              item[newContent] = newFileContent[newContent];
+            for (newContent in newFileContent) {
+              if (newContent !== "items") {
+                item[newContent] = newFileContent[newContent];
+              }
             }
-          }
-        } else if (item.id === parseInt(productId)) {
-          for (newContent in newFileContent) {
-            if (newContent !== "items") {
-              item[newContent] = newFileContent[newContent];
+          } else if (item.id === parseInt(productId)) {
+            for (newContent in newFileContent) {
+              if (newContent !== "items") {
+                item[newContent] = newFileContent[newContent];
+              }
             }
           }
         }
       }
-      await fileSystem.writeFileSync(
-        fileName,
-        JSON.stringify(readFile, null, 2)
-      );
     }
+    await fileSystem.writeFileSync(fileName, JSON.stringify(readFile, null, 2));
+    return true;
   } else {
     console.log("Property not found in the file");
+    return false;
   }
 };
 module.exports = {

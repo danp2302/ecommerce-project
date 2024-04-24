@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getRequest } from "../networkRequests/networkRequests";
 import CurrencyPoundIcon from "@mui/icons-material/CurrencyPound";
 import { Typography } from "@mui/material";
+
 const TotalCost = () => {
   const [totalCost, setTotalCost] = useState(0);
 

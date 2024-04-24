@@ -14,11 +14,18 @@ const AddToBasket = ({ productId }: ProductInterface) => {
       parameters: prodId,
     });
 
-    if (postData.success) {
+    if (postData?.success) {
       setAlert({
         open: true,
-        message: "Item added to basket successfully!",
+        message: postData?.message,
         color: "success",
+        autoHideDuration: 3000,
+      });
+    } else {
+      setAlert({
+        open: true,
+        message: postData?.message,
+        color: "error",
         autoHideDuration: 3000,
       });
     }

@@ -3,9 +3,7 @@ import { RequestInterface } from "../interfaces/requestInterface";
 const getRequest = async ({ url }: RequestInterface) => {
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
+
     const responseData = await response.json();
     if (responseData.success) {
       return responseData.data;
@@ -27,15 +25,12 @@ const postRequest = async ({ url, parameters }: RequestInterface) => {
         "Content-Type": "application/json",
       },
     });
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
     const responseData = await response.json();
 
-    if (responseData.success) {
+    if (responseData) {
       return responseData;
     } else {
-      throw new Error("Response data was not successful");
+      throw new Error("Unable to get response data");
     }
   } catch (error) {
     console.error("Error fetching data:", error);

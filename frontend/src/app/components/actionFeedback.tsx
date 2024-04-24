@@ -1,6 +1,6 @@
 "use client";
 import React, { useContext } from "react";
-import { Snackbar, SnackbarContent } from "@mui/material";
+import { Snackbar } from "@mui/material";
 import { ActionFeedbackContext } from "../context/actionFeedbackContext";
 import { Alert } from "@mui/material";
 

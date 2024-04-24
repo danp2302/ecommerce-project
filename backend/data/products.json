@@ -19,7 +19,7 @@
     {
       "id": 3,
       "name": "Record Player",
-      "description": "Listen to records",
+      "description": "Listen to records on this old record player.",
       "price": 250,
       "imageURL": "/full_path_name/backend/images/record_player.jpg",
       "numberInStock": 25
@@ -34,8 +34,8 @@
     },
     {
       "id": 5,
-      "name": "Beer",
-      "description": "A really cool t-shirt!",
+      "name": "Collection of beers",
+      "description": "An assorted collection of beers! Cheers!",
       "price": 20,
       "imageURL": "/full_path_name/backend/images/beer_collection.jpg",
       "numberInStock": 25

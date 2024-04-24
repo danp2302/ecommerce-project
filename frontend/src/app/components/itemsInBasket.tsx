@@ -20,7 +20,7 @@ const ItemsInBasket = () => {
     setInterval(fetchBasketItems, 1000);
   }, []);
   return (
-    <div className="relative px-5">
+    <div className="relative">
       <Badge
         badgeContent={totalItems}
         color="primary"
