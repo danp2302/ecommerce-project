@@ -55,9 +55,9 @@ const addToBasket = async (req, res) => {
 
     if (checkStock && checkCheckout && checkTotalCost) {
       const newBasketData = {
-        items: [basketItems], // Assuming basketItems is an array of items to add
-        checkout: (currentBasket.checkout += 1), // Increment checkout count
-        totalCost: (currentBasket.totalCost += returnItem.price), // Add to total cost
+        items: [basketItems],
+        checkout: (currentBasket.checkout += 1),
+        totalCost: (currentBasket.totalCost += returnItem.price),
       };
       const updateBasket = await helperFunctions.updateJSONFile(
         basketFile,
