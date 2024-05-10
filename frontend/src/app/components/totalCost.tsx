@@ -10,15 +10,18 @@ const TotalCost = () => {
 
   useEffect(() => {
     const fetchTotalCost = async () => {
-      const fetchedTotalCost = await getRequest({
+      const fetchedTotalCost: string = await getRequest({
         url: "http://localhost:9000/totalCostOfBasket",
       });
-      setTotalCost(fetchedTotalCost);
+      const fetchedDataJSON = JSON.parse(fetchedTotalCost);
+      if (fetchedDataJSON?.success) {
+        setTotalCost(fetchedDataJSON?.data);
+      }
     };
-
     fetchTotalCost();
     setInterval(fetchTotalCost, 1000);
   }, []);
+
   return (
     <div className="flex items-center">
       <svg

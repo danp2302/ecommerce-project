@@ -13,7 +13,10 @@ const ItemsInBasket = () => {
       const fetchedBasketItems = await getRequest({
         url: "http://localhost:9000/numberOfItemsInBasket",
       });
-      setTotalItems(fetchedBasketItems);
+      const fetchedDataJSON = JSON.parse(fetchedBasketItems);
+      if (fetchedDataJSON?.success) {
+        setTotalItems(fetchedDataJSON?.data);
+      }
     };
 
     fetchBasketItems();
