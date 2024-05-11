@@ -1,38 +1,38 @@
 import { RequestInterface } from "../interfaces/requestInterface";
 
-const getRequest = async ({ url }: RequestInterface): Promise<string> => {
+const getRequest = async ({ url }: RequestInterface) => {
   try {
     const response = await fetch(url);
     const responseData = await response.json();
 
     if (responseData) {
-      return JSON.stringify(responseData);
+      return responseData;
     } else {
       throw new Error("Response data was not successful");
     }
   } catch (error) {
     console.error("Error fetching data:", error);
-    return "";
+    return [];
   }
 };
 
 const getRequestWithParameters = async ({
   url,
   parameters,
-}: RequestInterface): Promise<string> => {
+}: RequestInterface) => {
   try {
     const urlWithParams = `${url}/${parameters}`;
     const response = await fetch(urlWithParams);
 
     const responseData = await response.json();
     if (responseData) {
-      return JSON.stringify(responseData);
+      return responseData;
     } else {
       throw new Error("Response data was not successful");
     }
   } catch (error) {
     console.error("Error fetching data:", error);
-    return "";
+    return [];
   }
 };
 

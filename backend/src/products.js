@@ -57,8 +57,13 @@ const searchForProduct = async (req, res) => {
 
   let productData = [];
   const products = readProductsFile.products;
-  products?.map((product) => {
-    if (product.name.toLowerCase() === productName.toLowerCase()) {
+  const searchFilter = products?.filter((product) =>
+    product?.name.toLowerCase().includes(productName.toLowerCase())
+  );
+
+  if (searchFilter) {
+    searchMatch = true;
+    searchFilter?.map((product) => {
       const encodedImage = fileSystem.readFileSync(product.imageURL);
       productData.push({
         productId: product?.id,
@@ -68,10 +73,8 @@ const searchForProduct = async (req, res) => {
         productImage: encodedImage.toString("base64"),
         productInStock: product?.numberInStock,
       });
-
-      searchMatch = true;
-    }
-  });
+    });
+  }
 
   if (!searchMatch) {
     return await helperFunctions.returnStatusMessage(

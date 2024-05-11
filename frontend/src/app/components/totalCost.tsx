@@ -10,12 +10,11 @@ const TotalCost = () => {
 
   useEffect(() => {
     const fetchTotalCost = async () => {
-      const fetchedTotalCost: string = await getRequest({
+      const fetchedTotalCost = await getRequest({
         url: "http://localhost:9000/totalCostOfBasket",
       });
-      const fetchedDataJSON = JSON.parse(fetchedTotalCost);
-      if (fetchedDataJSON?.success) {
-        setTotalCost(fetchedDataJSON?.data);
+      if (fetchedTotalCost?.success) {
+        setTotalCost(fetchedTotalCost?.data);
       }
     };
     fetchTotalCost();

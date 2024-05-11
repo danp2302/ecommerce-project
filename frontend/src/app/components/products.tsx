@@ -19,14 +19,12 @@ const Products = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData: string = await getRequest({
+      const fetchedData = await getRequest({
         url: "http://localhost:9000/getProducts",
       });
 
-      const fetchedDataJSON = JSON.parse(fetchedData);
-
-      if (fetchedDataJSON?.success) {
-        setProducts(fetchedDataJSON?.data);
+      if (fetchedData?.success) {
+        setProducts(fetchedData?.data);
       }
     };
     fetchData();
