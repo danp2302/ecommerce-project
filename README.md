@@ -6,9 +6,9 @@ The app is currently one page but it has lots of functionality, it does the foll
 2. It allows the user to add and remove an item from a basket
 3. It shows the total number of items in a basket
 4. It shows the total cost of the basket
-5. Display messages to say if the user was able to perform an action or nor
+5. Display messages to say if the user was able to perform an action or not
+6. Allows the user to search for a product using the search bar
 
-Future plans are to create a checkout page, add admin functionality and implement search functionality
 
 **_INSTRUCTIONS FOR SETTING UP DEVELOPMENT MODE_**
 
