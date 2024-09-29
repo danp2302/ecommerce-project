@@ -16,19 +16,10 @@ const readJSONFile = async (filename) => {
   }
 };
 
-const returnStatusMessage = async (
-  res,
-  message,
-  success,
-  code,
-  data = null
-) => {
-  let success_state = success;
-
+const returnStatusMessage = async (res, code, data = null) => {
   return await res.status(code).json({
-    message: message,
-    data: data,
-    success: success_state,
+    data,
+    code: code,
   });
 };
 

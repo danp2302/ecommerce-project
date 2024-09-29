@@ -3,42 +3,36 @@ const appRoot = path.join(__dirname, "..");
 const fileSystem = require("fs");
 
 const helperFunctions = require("../helper_functions/helpers");
+const { PrismaClient } = require("@prisma/client");
 const productsFile = path.join(appRoot, "./data", "products.json");
 
 const getProducts = async (req, res) => {
-  const readProductsFile = await helperFunctions.readJSONFile(productsFile);
+  //const readProductsFile = await helperFunctions.readJSONFile(productsFile);
+  const prisma = new PrismaClient();
+  const readProducts = await prisma.Product.findMany();
 
-  if (!readProductsFile) {
+  if (!readProducts) {
     return await helperFunctions.returnStatusMessage(
       res,
-      "Unable to read products file",
+      "Server error",
       false,
       500
     );
   }
 
-  const products = readProductsFile.products;
   let productsToSend = [];
 
-  products?.map((product) => {
-    const encodedImage = fileSystem.readFileSync(product.imageURL);
+  readProducts?.map((product) => {
     productsToSend.push({
-      productId: product?.id,
-      productName: product?.name,
-      productDescription: product?.description,
-      productPrice: product?.price,
-      productImage: encodedImage.toString("base64"),
-      productInStock: product?.numberInStock,
+      id: product?.id,
+      name: product?.name,
+      description: product?.description,
+      price: product?.price,
+      stock: product?.stock,
     });
   });
 
-  return await helperFunctions.returnStatusMessage(
-    res,
-    "Products retrieved successfully",
-    true,
-    200,
-    productsToSend
-  );
+  return await helperFunctions.returnStatusMessage(res, 200, productsToSend);
 };
 
 const searchForProduct = async (req, res) => {

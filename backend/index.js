@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const products = require("./routes/productRoutes");
-const basket = require("./routes/basketRoutes");
+const products = require("./routes/products");
+const basket = require("./routes/baskets");
 require("dotenv/config");
 
 app.use(cors());
