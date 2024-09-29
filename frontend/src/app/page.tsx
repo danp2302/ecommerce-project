@@ -1,4 +1,4 @@
-import Products from "./components/products";
+import Products from "./products/page";
 import { ActionFeedbackProvider } from "./context/actionFeedbackContext";
 import ActionFeedback from "./components/actionFeedback";
 import ItemsInBasket from "./components/itemsInBasket";
@@ -8,6 +8,7 @@ import Title from "./components/title";
 import SearchBar from "./components/searchBar";
 import { ProductProvider } from "./context/productsContext";
 import { SearchProvider } from "./context/searchContext";
+// import { Accordion } from "./components/accordion";
 
 export default function Home() {
   return (
