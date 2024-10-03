@@ -1,68 +1,46 @@
 {
   "products": [
     {
-      "id": 1,
       "name": "Blue T-Shirt",
       "description": "A really cool blue t-shirt!",
       "price": 30,
-      "imageURL": "/full_path_name/backend/images/Blue_Tshirt.jpg",
-      "numberInStock": 25
+      "image": "Blue_Tshirt.jpg",
+      "stock": 25
     },
     {
-      "id": 2,
       "name": "Headphones",
       "description": "Get the latest headphones for listening to music.",
       "price": 100,
-      "imageURL": "/full_path_name/backend/images/headphones.jpg",
-      "numberInStock": 25
+      "image": "headphones.jpg",
+      "stock": 25
     },
     {
-      "id": 3,
       "name": "Record Player",
       "description": "Listen to records on this old record player.",
       "price": 250,
-      "imageURL": "/full_path_name/backend/images/record_player.jpg",
-      "numberInStock": 25
+      "image": "record_player.jpg",
+      "stock": 25
     },
     {
-      "id": 4,
       "name": "PS5",
       "description": "Get the latest PS5 now!",
       "price": 500,
-      "imageURL": "/full_path_name/backend/images/ps5_console.jpg",
-      "numberInStock": 25
+      "image": "ps5_console.jpg",
+      "stock": 25
     },
     {
-      "id": 5,
       "name": "Collection of beers",
       "description": "An assorted collection of beers! Cheers!",
       "price": 20,
-      "imageURL": "/full_path_name/backend/images/beer_collection.jpg",
-      "numberInStock": 25
+      "image": "beer_collection.jpg",
+      "stock": 25
     },
     {
-      "id": 6,
       "name": "Game Over T-Shirt",
       "description": "A t-shirt for geeks!",
       "price": 30,
-      "imageURL": "/full_path_name/backend/images/tshirt.jpg",
-      "numberInStock": 25
-    },
-    {
-      "id": 7,
-      "name": "Tea/Coffee Set",
-      "description": "A tea/coffee set suitable for all occassions",
-      "price": 30,
-      "imageURL": "/full_path_name/backend/images/coffee_set.jpg",
-      "numberInStock": 25
-    },
-    {
-      "id": 8,
-      "name": "Blue Lamp",
-      "description": "A blue lamp useful for work!",
-      "price": 30,
-      "imageURL": "/full_path_name/backend/images/desk_lamp.jpg",
-      "numberInStock": 25
+      "image": "tshirt.jpg",
+      "stock": 25
     }
   ]
 }

@@ -2,6 +2,11 @@ import * as React from "react";
 
 import { cn } from "@/app/lib/utils";
 
+interface CardImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  productImage?: string; // Base64 image string from the database
+  href?: string; // Optional link
+}
+
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -76,6 +81,35 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = "CardFooter";
 
+const CardImage = React.forwardRef<HTMLImageElement, CardImageProps>(
+  ({ className, productImage, href, height = 150, ...props }, ref) => {
+    // Image source is generated from the base64 data
+    const imageSrc = `data:image/jpeg;base64,${productImage}`;
+
+    // Image component
+    const image = (
+      <img
+        ref={ref}
+        src={imageSrc}
+        height={height} // Default height is 150, but can be customized
+        className={cn("h-auto w-full", className)}
+        {...props}
+      />
+    );
+
+    // Conditionally render anchor tag if href is present
+    return href ? (
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        {image}
+      </a>
+    ) : (
+      image
+    );
+  }
+);
+
+CardImage.displayName = "CardImage";
+
 export {
   Card,
   CardHeader,
@@ -83,4 +117,5 @@ export {
   CardTitle,
   CardDescription,
   CardContent,
+  CardImage,
 };
